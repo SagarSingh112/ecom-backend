@@ -9,9 +9,9 @@ const dto     = u  => ({ id: u.id, name: u.name, email: u.email, isAdmin: u.isAd
 // Auto-create admin on startup
 ;(async () => {
   try {
-    if (!await User.findOne({ email: 'admin@shopzone.com' })) {
-      await new User({ name:'Admin', email:'admin@shopzone.com', password:'admin123', isAdmin:true }).save();
-      console.log('✅ Admin: admin@shopzone.com / admin123');
+    if (!await User.findOne({ email: 'singhsagarsingh11@gmail.com' })) {
+      await new User({ name:'Admin', email:'singhsagarsingh11@gmail.com', password:'Sagar3120', isAdmin:true }).save();
+      console.log('✅ Admin: singhsagarsingh11@gmail.com / Sagar3120');
     }
   } catch(e) {}
 })();
@@ -41,6 +41,19 @@ router.get('/me', async (req, res) => {
     const { user: { id } } = jwt.verify(token, SECRET);
     res.json(await User.findById(id).select('-password'));
   } catch { res.status(401).json({ msg: 'Invalid token' }); }
+});
+
+// Make admin route
+router.post('/make-admin', async (req, res) => {
+  try {
+    const user = await User.findOneAndUpdate(
+      { email: req.body.email },
+      { isAdmin: true },
+      { new: true }
+    );
+    if (!user) return res.status(404).json({ msg: 'User not found' });
+    res.json({ msg: 'User updated to admin successfully', user: dto(user) });
+  } catch(e) { res.status(500).json({ msg: e.message }); }
 });
 
 module.exports = router;
